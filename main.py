@@ -1,5 +1,6 @@
 from pprint import pprint
-# pyfrom functions.os_ops import open_camera, open_cmd, open_discord, open_notepad, open_calculator
+from functions.online_ops import OPENWEATHER_APP_ID
+from functions.os_ops import open_camera, open_cmd, open_discord, open_notepad, open_calculator
 from functions.online_ops import find_my_ip, get_latest_news, get_random_advice, get_random_joke, get_trending_movies, get_weather_report, play_on_youtube, search_on_google, search_on_wikipedia, send_email
 import requests
 import pyttsx3
@@ -11,6 +12,9 @@ from utils import opening_text
 
 USERNAME = config('USER')
 BOTNAME = config('BOTNAME')
+STATE_CODE = 'WI'
+COUNTRY_CODE = 'US'
+CITY_NAME = 'MIDDLETON'
 
 engine = pyttsx3.init('sapi5')
 
@@ -46,7 +50,7 @@ def greet_user():
 
 
 def take_user_input():
-    """Takes user input, recognizes it using Speech Recognition moduel and converts it into text"""
+    """Takes user input, recognizes it using Speech Recognition module and converts it into text"""
 
     r = sr.Recognizer()
     with sr.Microphone() as source:
@@ -57,7 +61,7 @@ def take_user_input():
     try:
         print('Recognizing...')
         query = r.recognize_google(audio, language='en-us')
-        if not 'exit' in query or 'stop' in query:
+        if not 'exit' in query or 'stop' in query or 'done' in query or 'thanks' in query or 'thank you' in query or 'no' in query:
             speak(choice(opening_text))
         else:
             hour = datetime.now().hour
@@ -95,35 +99,26 @@ if __name__ == '__main__':
         elif 'ip address' in query:
             ip_address = find_my_ip()
             speak(
-                f'Your IP Address is {ip_address}.\n For your convenience, I am printing it on the screen sir.')
+                f'Your IP Address is {ip_address}.\n For your convenience, I am printing it on the screen.')
             print(f'Your IP Address is {ip_address}')
 
         elif 'wikipedia' in query:
-            speak('What do you want to search on Wikipedia, sir?')
+            speak('What do you want to search on Wikipedia?')
             search_query = take_user_input().lower()
             results = search_on_wikipedia(search_query)
             speak(f"According to Wikipedia, {results}")
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak("For your convenience, I am printing it on the screen.")
             print(results)
 
         elif 'youtube' in query:
-            speak('What do you want to play on Youtube, sir?')
+            speak('What do you want to play on Youtube?')
             video = take_user_input().lower()
             play_on_youtube(video)
 
         elif 'search on google' in query:
-            speak('What do you want to search on Google, sir?')
+            speak('What do you want to search on Google?')
             query = take_user_input().lower()
             search_on_google(query)
-
-        elif "send whatsapp message" in query:
-            speak(
-                'On what number should I send the message sir? Please enter in the console: ')
-            number = input("Enter the number: ")
-            speak("What is the message sir?")
-            message = take_user_input().lower()
-            send_whatsapp_message(number, message)
-            speak("I've sent the message sir.")
 
         elif "send an email" in query:
             speak("On what email address do I send sir? Please enter in the console: ")
@@ -136,41 +131,52 @@ if __name__ == '__main__':
                 speak("I've sent the email sir.")
             else:
                 speak(
-                    "Something went wrong while I was sending the mail. Please check the error logs sir.")
+                    "Something went wrong while I was sending the mail. Please check the error logs.")
 
         elif 'joke' in query:
-            speak(f"Hope you like this one sir")
+            speak(f"Hope you like this one.")
             joke = get_random_joke()
             speak(joke)
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak("For your convenience, I am printing it on the screen.")
             pprint(joke)
 
         elif "advice" in query:
-            speak(f"Here's an advice for you, sir")
+            speak(f"Here's some advice for you.")
             advice = get_random_advice()
             speak(advice)
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak("For your convenience, I am printing it on the screen.")
             pprint(advice)
 
         elif "trending movies" in query:
             speak(f"Some of the trending movies are: {get_trending_movies()}")
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak("For your convenience, I am printing it on the screen.")
             print(*get_trending_movies(), sep='\n')
 
         elif 'news' in query:
-            speak(f"I'm reading out the latest news headlines, sir")
+            speak(f"I'm reading out the latest news headlines.")
             speak(get_latest_news())
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak("For your convenience, I am printing it on the screen.")
             print(*get_latest_news(), sep='\n')
 
         elif 'weather' in query:
-            ip_address = find_my_ip()
-            city = requests.get(f"https://ipapi.co/{ip_address}/city/").text
-            speak(f"Getting weather report for your city {city}")
-            weather, temperature, feels_like = get_weather_report(city)
+            speak("What location would you like to view the weather for?")
+            weather_location = take_user_input().lower()
+            # city = requests.get(
+            # f"http://api.openweathermap.org/geo/1.0/direct?q={CITY_NAME},{STATE_CODE},{COUNTRY_CODE}&limit={1}&appid={OPENWEATHER_APP_ID}").text
+            #ip_address = find_my_ip()
+            #city = requests.get(f"https://ipapi.co/{ip_address}/city/").text
+            city = 'Middleton'
+            state = 'US'
+
+            print(city)
+
+            speak(f"Getting weather report for your city {city}, {state}")
+            weather, temperature, feels_like = get_weather_report(
+                city, state)
             speak(
                 f"The current temperature is {temperature}, but it feels like {feels_like}")
-            speak(f"Also, the weather report talks about {weather}")
-            speak("For your convenience, I am printing it on the screen sir.")
+            speak(f"Also, the weather report shows it is {weather}")
+            speak("For your convenience, I am printing it on the screen.")
             print(
                 f"Description: {weather}\nTemperature: {temperature}\nFeels like: {feels_like}")
+        speak("Is there anything else I can do for you?")

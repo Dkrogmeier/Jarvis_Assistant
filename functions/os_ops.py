@@ -8,6 +8,7 @@ paths = {
     # 'league':
     # 'chrome':
     # 'vs code':
+    # 'spotify':
 }
 
 

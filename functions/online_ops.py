@@ -28,6 +28,10 @@ def play_on_youtube(video):
     kit.playonyt(video)
 
 
+def play_on_spotify(song):
+    pass
+
+
 def search_on_google(query):
     kit.search(query)
 
@@ -60,13 +64,13 @@ def get_latest_news():
     return news_headlines[:5]
 
 
-def get_weather_report(city):
+def get_weather_report(city, state):
     res = requests.get(
-        f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_APP_ID}&units=metric").json()
+        f"http://api.openweathermap.org/data/2.5/weather?q={city},{state}&appid={OPENWEATHER_APP_ID}&units=imperial").json()
     weather = res["weather"][0]["main"]
     temperature = res["main"]["temp"]
     feels_like = res["main"]["feels_like"]
-    return weather, f"{temperature} C", f"{feels_like} C"
+    return weather, f"{temperature}°F", f"{feels_like}°F"
 
 
 def get_trending_movies():
@@ -90,3 +94,23 @@ def get_random_joke():
 def get_random_advice():
     res = requests.get("https://api.adviceslip.com/advice").json()
     return res['slip']['advice']
+
+
+def calender():
+    """This returns google calender events for current day"""
+    pass
+
+
+def todo():
+    """This returns to-do list for current day"""
+    pass
+
+
+def add_todo():
+    """This adds elements to a to-do list for current day"""
+    pass
+
+
+def delete_todo():
+    """This deletes elements from a to-do list for current day"""
+    pass
